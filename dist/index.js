@@ -37774,7 +37774,13 @@ function wrappy (fn, cb) {
 
 const { context } = __nccwpck_require__(5438);
 
-function buildSlackAttachments({ status, color, github, note, noteTitle = 'Note' }) {
+function buildSlackAttachments({
+  status,
+  color,
+  github,
+  note,
+  noteTitle = "Note",
+}) {
   const { payload, ref, workflow, eventName } = github.context;
   const { owner, repo } = context.repo;
   const event = eventName;
@@ -37791,14 +37797,16 @@ function buildSlackAttachments({ status, color, github, note, noteTitle = 'Note'
 
   const referenceLink =
     event === "pull_request"
-      ? [
-        {
-          title: "Pull Request",
-          value: `<${payload.pull_request.html_url} | ${payload.pull_request.title}>`,
-          short: true,
-        },
-      ]
-      : [];
+      ? {
+        title: "Pull Request",
+        value: `<${payload.pull_request.html_url} | ${payload.pull_request.title}>`,
+        short: true,
+      }
+      : {
+        title: "Branch",
+        value: `<https://github.com/${owner}/${repo}/commit/${sha} | ${branch}>`,
+        short: true,
+      };
 
   const noteAttachment = note
     ? [
@@ -37829,7 +37837,7 @@ function buildSlackAttachments({ status, color, github, note, noteTitle = 'Note'
           value: status,
           short: true,
         },
-        ...referenceLink,
+        referenceLink,
         ...noteAttachment,
         {
           title: "Branch",
